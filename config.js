@@ -28,7 +28,6 @@ module.exports = {
     'microsoft-teams',
     'windscribe',
     'zoomus',
-    'protonmail-bridge',
     'rectangle',
     // Quick Look Plugins
     'qlcolorcode',
