@@ -11,9 +11,9 @@ module.exports = {
     'mas',
     // Install wget with IRI support
     'wget --enable-iri',
-    'sshfs',
     'mackup',
-    'youtube-dl'
+    'youtube-dl',
+    'gotop'
   ],
   cask: [
     '1password',
@@ -37,8 +37,7 @@ module.exports = {
     'qlimagesize',
     'qlvideo',
     // CLI things
-    'azure-cli',
-    'osxfuse'
+    'azure-cli'
   ],
   gem: [
   ],
