@@ -395,11 +395,14 @@ sudo chflags uchg /Private/var/vm/sleepimage;ok
 # Optional / Experimental                      #
 ################################################
 
-running "Set computer name (as done via System Preferences → Sharing)"
-sudo scutil --set ComputerName "👨🏻‍💻"
-sudo scutil --set HostName "tg"
-sudo scutil --set LocalHostName "tg"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "tg"
+read -r -p "Change computer name? [y|N] " response
+if [[ $response =~ (y|yes|Y) ]]; then
+  running "Set computer name (as done via System Preferences → Sharing)"
+  sudo scutil --set ComputerName "👨🏻‍💻"
+  sudo scutil --set HostName "tg"
+  sudo scutil --set LocalHostName "tg"
+  sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "tg"
+fi
 
 #setting up the computer label & name
 # read -p "What is this machine's label (Example: Paul's MacBook Pro ) ? " mac_os_label
@@ -458,8 +461,8 @@ defaults write com.apple.dock persistent-apps -array "";ok
 #running "Enable the 2D Dock"
 #defaults write com.apple.dock no-glass -bool true;ok
 
-#running "Disable the Launchpad gesture (pinch with thumb and three fingers)"
-#defaults write com.apple.dock showLaunchpadGestureEnabled -int 0;ok
+running "Disable the Launchpad gesture (pinch with thumb and three fingers)"
+defaults write com.apple.dock showLaunchpadGestureEnabled -int 0;ok
 
 #running "Add a spacer to the left side of the Dock (where the applications are)"
 #defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}';ok
@@ -485,12 +488,12 @@ bot "Standard System Changes"
 # running "Menu bar: disable transparency"
 # defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool false;ok
 
-running "Menu bar: hide the Time Machine, Volume, User, and Bluetooth icons"
+running "Menu bar: hide the Time Machine, Volume icons"
 for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
   defaults write "${domain}" dontAutoLoad -array \
     "/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
     "/System/Library/CoreServices/Menu Extras/Volume.menu" \
-    "/System/Library/CoreServices/Menu Extras/User.menu"
+    # "/System/Library/CoreServices/Menu Extras/User.menu"
 done;
 defaults write com.apple.systemuiserver menuExtras -array \
   "/System/Library/CoreServices/Menu Extras/AirPort.menu" \
@@ -650,22 +653,22 @@ defaults write com.apple.finder _FXSortFoldersFirst -bool true
 running "Disable window animations and Get Info animations"
 defaults write com.apple.finder DisableAllAnimations -bool true;ok
 
-running "Set Desktop as the default location for new Finder windows"
+running "Set Home Folder as the default location for new Finder windows"
 # For other paths, use 'PfLo' and 'file:///full/path/here/'
-defaults write com.apple.finder NewWindowTarget -string "PfDe"
-defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Desktop/";ok
+defaults write com.apple.finder NewWindowTarget -string "PfLo"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}";ok
 
-running "Show hidden files by default"
-defaults write com.apple.finder AppleShowAllFiles -bool true;ok
+# running "Show hidden files by default"
+# defaults write com.apple.finder AppleShowAllFiles -bool true;ok
 
-running "Show all filename extensions"
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true;ok
+# running "Show all filename extensions"
+# defaults write NSGlobalDomain AppleShowAllExtensions -bool true;ok
 
 running "Show status bar"
 defaults write com.apple.finder ShowStatusBar -bool true;ok
 
-running "Show path bar"
-defaults write com.apple.finder ShowPathbar -bool true;ok
+# running "Show path bar"
+# defaults write com.apple.finder ShowPathbar -bool true;ok
 
 running "Allow text selection in Quick Look"
 defaults write com.apple.finder QLEnableTextSelection -bool true;ok
@@ -766,6 +769,9 @@ defaults write com.apple.dock expose-group-by-app -bool false;ok
 
 running "Don’t automatically rearrange Spaces based on most recent use"
 defaults write com.apple.dock mru-spaces -bool false;ok
+
+running "Don’t automatically switch Spaces on App Focus"
+defaults write com.apple.Dock workspaces-auto-swoosh -bool false;ok
 
 running "Remove the auto-hiding Dock delay"
 defaults write com.apple.dock autohide-delay -float 0;ok
@@ -927,8 +933,8 @@ running "Load new settings before rebuilding the index"
 killall mds > /dev/null 2>&1;ok
 running "Make sure indexing is enabled for the main volume"
 sudo mdutil -i on / > /dev/null;ok
-#running "Rebuild the index from scratch"
-#sudo mdutil -E / > /dev/null;ok
+running "Rebuild the index from scratch"
+sudo mdutil -E / > /dev/null;ok
 
 ###############################################################################
 bot "Terminal"
@@ -1081,8 +1087,8 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 ###############################################################################
 bot "OK. Note that some of these changes require a logout/restart to take effect. Killing affected applications (so they can reboot)...."
 for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
-  "Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
-  "iCal" "Terminal"; do
+  "Dock" "Finder" "Mail" "Messages" "Safari" "SystemUIServer" \
+  "iCal"; do
   killall "${app}" > /dev/null 2>&1
 done
 
