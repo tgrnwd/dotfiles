@@ -211,6 +211,7 @@ fi
 
 bot "installing fonts"
 # need fontconfig to install/build fonts
+require_brew svn
 require_brew fontconfig
 ./fonts/install.sh
 brew tap homebrew/cask-fonts
